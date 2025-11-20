@@ -9,9 +9,14 @@ class PelangganController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data['dataPelanggan'] = Pelanggan::all();
+        $filterablecolums = ['gender'];
+
+        $searchablecolums = ['first_name','last_name','email'];
+
+        $data['dataPelanggan'] = Pelanggan::filter($request, $filterablecolums)->search($request,$searchablecolums)->Paginate(20)->onEachSide(2);
+
         return view('admin.pelanggan.index', $data);
     }
 
@@ -75,7 +80,7 @@ class PelangganController extends Controller
         $pelanggan->phone      = $request->phone;
 
         $pelanggan->save();
-        return redirect()->route('pelanggan.index')->with('update','Perubahan Data Berhasil');
+        return redirect()->route('pelanggan.index')->with('update', 'Perubahan Data Berhasil');
     }
 
     /**
@@ -86,6 +91,6 @@ class PelangganController extends Controller
         $pelanggan = Pelanggan::findOrFail($id);
 
         $pelanggan->delete();
-        return redirect()->route('pelanggan.index')->with('delete','Data Berhasil Dihapus');
+        return redirect()->route('pelanggan.index')->with('delete', 'Data Berhasil Dihapus');
     }
 }
